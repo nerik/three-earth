@@ -23,9 +23,12 @@
     "eslint": "^1.8.0"
   },
   "dependencies": {
+    "earcut": "^2.0.6",
     "lerp": "^1.0.3",
     "polyline": "^0.2.0",
+    "proj4": "^2.3.12",
     "three": "^0.73.0",
-    "through2": "^2.0.0"
+    "through2": "^2.0.0",
+    "underscore": "^1.8.3"
   }
 }

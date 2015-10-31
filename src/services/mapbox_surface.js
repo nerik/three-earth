@@ -1,67 +1,98 @@
 var Readable = require('stream').Readable;
 var http = require('http');
 var querystring = require('querystring');
+var _ = require('underscore');
 var polyline = require('polyline');
 var getLatLonGrid = require('./utils/getLatLonGrid');
+var normalizeGrid = require('./utils/normalizeGrid');
+
 
 var rs = Readable();
 
-var test = {
-  grid: [
-    [[0,0,0],[0,1,0]],
-    [[1,0,1],[1,1,1]],
-    [[2,0,0],[2,1,0]]
-  ]
-}
-
 rs._read = function() {
-  // this.push(JSON.stringify(test));
-  // this.push(null);
 }
 
+var rootPath, params, rows, results, numRequests, totalRequests, options;
 
-module.exports = function(options) {
-  // var points = getPointsOnLine(options.bounds[0], options.bounds[1], 50);
-  // console.log(points)
-  //
-  // var encoded_polyline = polyline.encode(points);
-  //
-  // console.log(polyline.decode(encoded_polyline).length)
+module.exports = function(_options) {
 
-  var grid = getLatLonGrid(options.bounds, options.latSteps, options.lonSteps);
-  console.log(grid);
+  options = _options;
 
-  rs.push(null);
+  rootPath = `/v4/surface/${options.mapid}.json?`;
+  params = {
+    layer: options.layer,
+    fields: options.field,
+    interpolate: true,
+    access_token: options.access_token
+  };
 
-  // var params = querystring.stringify({
-  //   layer: options.layer,
-  //   fields: options.field,
-  //   access_token: options.access_token,
-  //   encoded_polyline: encoded_polyline
-  // });
-  // console.log(params)
-  // var path = `/v4/surface/${options.mapid}.json?${params}`;
-  //
-  // http.get({
-  //   host: 'api.mapbox.com',
-  //   path: path
-  // }, function(response) {
-  //   // console.log(response)
-  //   // Continuously update stream with data
-  //   var body = '';
-  //   response.on('data', function(d) {
-  //       body += d;
-  //   });
-  //   response.on('end', function() {
-  //       var parsed = JSON.parse(body);
-  //       // console.log(body)
-  //       // console.log(JSON.stringify(parsed));
-  //       // console.log(parsed.results.length);
-  //       parsed.results.forEach(function(val) {
-  //         console.log(val.latlng.lat +  ',' + val.latlng.lat + '->' + val.ele)
-  //       })
-  //       rs.push(null)
-  //   });
-  // });
+  rows = getLatLonGrid(options.bounds, options.latSteps, options.lonSteps);
+
+  totalRequests = rows.length;
+  numRequests = 0;
+  results = [];
+
+  for (var i = 0; i < rows.length; i++) {
+    setTimeout(_.partial(fetch, i), i*0);
+  }
+
   return rs;
 };
+
+function fetch(i) {
+  var points = rows[i];
+  // params.encoded_polyline = polyline.encode(points);
+  params.points = points.map(function(pt) {
+    return `${pt[1]},${pt[0]}`;
+  }).join(';');
+  var path = `${rootPath}${querystring.stringify(params)}`;
+  http.get({
+    host: 'api.mapbox.com',
+    path: path
+  }, _.partial(responseHandler, i));
+}
+
+
+function responseHandler(i, response) {
+    // console.log(arguments[1])
+    var body = '';
+    response.on('data', function(d) {
+        body += d;
+    });
+    response.on('end', function() {
+        var parsed = JSON.parse(body);
+        // console.log(body)
+        // console.log(JSON.stringify(parsed));
+        // console.log(parsed.results.length);
+        parsed.results.forEach(function(val) {
+          // console.log(val.latlng.lat +  ',' + val.latlng.lng + '->' + val.ele)
+        })
+        // console.log('---')
+        // console.log(i)
+
+        results[i] = parsed.results;
+        numRequests++;
+        if (numRequests === totalRequests) {
+          complete();
+        }
+
+    });
+}
+
+function complete() {
+  rs.push(JSON.stringify({
+    grid: normalizeGrid(gridify(results), options.bounds)
+  }));
+  rs.push(null);
+}
+
+function gridify(rows) {
+  var grid = [];
+  for (var i = 0; i < rows.length; i++) {
+    // console.log(rows[i].length);
+    grid.push(rows[i].map(function(pt) {
+      return [pt.latlng.lat, pt.latlng.lng, pt[options.field]]
+    }));
+  }
+  return grid;
+}

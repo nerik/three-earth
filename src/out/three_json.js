@@ -4,12 +4,10 @@ var THREE = require('three');
 var stream = through(write, end);
 
 function write(buffer, encoding, next) {
-  // var serviceData = JSON.parse(buffer.toString());
-  // var geometry = getGeometry(serviceData.grid);
-  // var scene = getScene(geometry);
-  // this.push(JSON.stringify(scene));
-  // next();
-  this.push(buffer.toString());
+  var serviceData = JSON.parse(buffer.toString());
+  var geometry = getGeometry(serviceData.grid);
+  var scene = getScene(geometry);
+  this.push(JSON.stringify(scene));
   next();
 }
 

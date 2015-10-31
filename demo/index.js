@@ -3,18 +3,20 @@ var three_json = require('../src/out/three_json.js');
 
 var service = mapbox_surface({
   bounds: [
-    [28.7, -16.8], //NW bound
-    [27.7, -16.2] //SE bound
+    [10.200002, -11], //NW bound
+    [-10, 11] //SE bound
   ],
-  latSteps: 10,
-  lonSteps: 10,
+  latSteps: 3,
+  lonSteps: 3,
   mapid: "mapbox.mapbox-terrain-v1",
   layer: "contour",
   field: "ele",
   access_token: require('./token.js')
 });
 
-var out = three_json();
+var out = three_json({
+
+});
 
 
 service
