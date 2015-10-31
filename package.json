@@ -23,6 +23,9 @@
     "eslint": "^1.8.0"
   },
   "dependencies": {
-    "three.js": "^0.73.0"
+    "lerp": "^1.0.3",
+    "polyline": "^0.2.0",
+    "three": "^0.73.0",
+    "through2": "^2.0.0"
   }
 }
