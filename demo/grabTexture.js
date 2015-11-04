@@ -6,9 +6,10 @@ var options = {
   mapid: "mapbox.outdoors",
   access_token: require('./token.js')
 }
+
 var viewport = {
-  center: ['47.787089', '-123.530895'],
-  zoom: 11,
+  center: ['28.2868', '-16.6292'],
+  zoom: 12,
   width: 1280,
   height: 1280
 }

@@ -1,14 +1,9 @@
 #!/usr/bin/env node
 
-// var bounds = [
-//   [ 28.506431579589844, -16.83970461701538 ],
-//   [ 28.066978454589844, -16.41863185161586 ]
-// ];
-
 var bounds = [
-  [ 48.22654724121094, -56.71091303022315 ],
-     [ 47.34764099121094, -56.22541305969477 ]
-   ]
+  [ 28.506431579589844, -16.83970461701538 ],
+  [ 28.066978454589844, -16.41863185161586 ]
+];
 
 
 var mapbox_surface = require('../src/services/mapbox_surface');
@@ -17,8 +12,8 @@ var tesselate = require('../src/out/utils/tesselate.js');
 
 var mapbox = mapbox_surface({
   bounds: bounds,
-  latSteps: 200,
-  lonSteps: 200,
+  latSteps: 20,
+  lonSteps: 20,
   mapid: "mapbox.mapbox-terrain-v1",
   layer: "contour",
   field: "ele",

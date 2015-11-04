@@ -11,12 +11,17 @@ loader.load('demo.json', function(text) {
   var geometry = geomLoader.parse(rawGeom).geometry;
   geometry.computeBoundingSphere();
 
+  console.log(rawGeom);
+  geometry.colors = rawGeom.colors;
+  geometry.colorsNeedUpdate = true;
+
   var textureLoader = new THREE.TextureLoader();
   textureLoader.load('test.png', function (texture) {
     var textureMaterial = new THREE.MeshBasicMaterial( {
       map: texture
     });
-    terrain = new THREE.Mesh( geometry, textureMaterial );
+    // terrain = new THREE.Mesh( geometry, textureMaterial );
+    terrain = new THREE.Mesh( geometry,  new THREE.MeshBasicMaterial({ vertexColors: THREE.FaceColors }) );
     // terrain = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { wireframe: true, color: 0x00ff00 } ) );
     scene.add( terrain );
 

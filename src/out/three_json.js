@@ -48,10 +48,10 @@ function _getGeometry(vertices, tin_g) {
     ]);
   }
 
-  // set up normals
 
 
-  geometry.name = 'terrain'+Math.random();
+
+  geometry.name = 'terrain_'+Math.random();
   return geometry;
 }
 
@@ -66,6 +66,17 @@ var three_json = function (points_g, _options) {
   // return;
   var scene = _getScene(geometry);
   scene.metadata.generator = 'https://github.com/nerik/three-earth';
+
+  // console.log(scene.geometries[0].data)
+
+  // set up colors
+  var colors = [];
+  for (var k = 0; k < geometry.vertices.length; k++) {
+    colors[k] = 0xff0000;
+  }
+  scene.geometries[0].data.colors = colors;
+
+
   return scene;
 }
 
