@@ -12,8 +12,8 @@ var tesselate = require('../src/out/utils/tesselate.js');
 
 var mapbox = mapbox_surface({
   bounds: bounds,
-  latSteps: 20,
-  lonSteps: 20,
+  latSteps: 200,
+  lonSteps: 200,
   mapid: "mapbox.mapbox-terrain-v1",
   layer: "contour",
   field: "ele",

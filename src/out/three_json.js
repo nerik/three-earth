@@ -67,8 +67,6 @@ var three_json = function (points_g, _options) {
   var scene = _getScene(geometry);
   scene.metadata.generator = 'https://github.com/nerik/three-earth';
 
-  // console.log(scene.geometries[0].data)
-
   // set up colors
   var colors = [];
   for (var k = 0; k < geometry.vertices.length; k++) {
