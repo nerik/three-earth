@@ -4,13 +4,10 @@ var querystring = require('querystring');
 var _ = require('underscore');
 var polyline = require('polyline');
 var getLatLonGrid = require('./utils/getLatLonGrid');
-var normalizeGrid = require('./utils/normalizeGrid');
-
+var turf = require('turf');
 
 var rs = Readable();
-
-rs._read = function() {
-}
+rs._read = function() {}
 
 var rootPath, params, rows, results, numRequests, totalRequests, options;
 
@@ -80,19 +77,25 @@ function responseHandler(i, response) {
 }
 
 function complete() {
-  rs.push(JSON.stringify({
-    grid: normalizeGrid(gridify(results), options.bounds)
-  }));
+  // console.log(results)
+  var points_g = toGeoJSON(results);
+
+  rs.push(JSON.stringify(points_g));
   rs.push(null);
 }
 
-function gridify(rows) {
-  var grid = [];
-  for (var i = 0; i < rows.length; i++) {
-    // console.log(rows[i].length);
-    grid.push(rows[i].map(function(pt) {
-      return [pt.latlng.lat, pt.latlng.lng, pt[options.field]]
-    }));
-  }
-  return grid;
+function toGeoJSON() {
+  var pts = [];
+  results.forEach(function(row) {
+    row.forEach(function(pt) {
+      var gpt = turf.point([pt.latlng.lng, pt.latlng.lat]);
+      gpt.properties = {
+        // store value, typically elevation, specified by options.field
+        v: pt[options.field]
+      }
+      pts.push(gpt);
+    })
+  })
+  var fc = turf.featurecollection(pts)
+  return fc;
 }

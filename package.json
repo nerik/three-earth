@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "earcut": "^2.0.6",
+    "geo-viewport": "^0.1.1",
     "lerp": "^1.0.3",
     "polyline": "^0.2.0",
     "proj4": "^2.3.12",
