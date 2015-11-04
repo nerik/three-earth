@@ -38,10 +38,10 @@ module.exports = function(_options) {
 
 function fetch(i) {
   var points = rows[i];
-  // params.encoded_polyline = polyline.encode(points);
-  params.points = points.map(function(pt) {
-    return `${pt[1]},${pt[0]}`;
-  }).join(';');
+  params.encoded_polyline = polyline.encode(points);
+  // params.points = points.map(function(pt) {
+  //   return `${pt[1]},${pt[0]}`;
+  // }).join(';');
   var path = `${rootPath}${querystring.stringify(params)}`;
   http.get({
     host: 'api.mapbox.com',
@@ -58,14 +58,6 @@ function responseHandler(i, response) {
     });
     response.on('end', function() {
         var parsed = JSON.parse(body);
-        // console.log(body)
-        // console.log(JSON.stringify(parsed));
-        // console.log(parsed.results.length);
-        parsed.results.forEach(function(val) {
-          // console.log(val.latlng.lat +  ',' + val.latlng.lng + '->' + val.ele)
-        })
-        // console.log('---')
-        // console.log(i)
 
         results[i] = parsed.results;
         numRequests++;
@@ -77,7 +69,6 @@ function responseHandler(i, response) {
 }
 
 function complete() {
-  // console.log(results)
   var points_g = toGeoJSON(results);
 
   rs.push(JSON.stringify(points_g));
